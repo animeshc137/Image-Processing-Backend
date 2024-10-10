@@ -141,6 +141,8 @@ if __name__ == "__main__":
     input_csv = CSV_INPUT
     output_csv = CSV_OUTPUT
     
+    # Receive CSV and process images
+    
     process_csv(input_csv, output_csv)
 
 
