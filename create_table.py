@@ -1,4 +1,4 @@
-from getSqlConnection import get_connection
+from get_sql_connection import get_connection
 connection = get_connection()
 # run once to create the tabele in sql
 try:

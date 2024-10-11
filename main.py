@@ -1,10 +1,9 @@
 import uuid
 import os
-from io import BytesIO
 import pandas as pd
-import requests
-from PIL import Image
-from getSqlConnection import get_connection
+from get_sql_connection import get_connection
+from csv_validator import validate_csv
+from image_processing import process_image
 # below vars.py contains following environment variables 
 # SQLHOST sql hostname
 # DB database name
@@ -17,35 +16,9 @@ from getSqlConnection import get_connection
 from vars import *
 
 connection = get_connection()
-
 # Directory to store processed images
 output_image_dir = OUTPUT_IMAGE_DIR
 os.makedirs(output_image_dir, exist_ok=True)
-
-# Function to validate CSV
-def validate_csv(df):
-    required_columns = ['S.No.', 'Product Name', 'Input Image Urls']
-    for col in required_columns:
-        if col not in df.columns:
-            raise ValueError(f"Missing required column: {col}")
-    if df.isnull().values.any():
-        raise ValueError("CSV contains null values, which is not allowed")
-
-# Function to download and compress images by 50%
-def process_image(image_url):
-
-    try:
-        # Download the image
-        response = requests.get(image_url)
-        img = Image.open(BytesIO(response.content))
-        # Compress image by 50%
-        output_image_path = os.path.join(output_image_dir, f"{uuid.uuid4()}.jpg")
-        img.save(output_image_path, format="JPEG", quality=50)  # Adjust quality for compression
-        return output_image_path
-    except Exception as e:
-        print(f"Error processing image {image_url}: {e}")
-        return None
-
 # Function to process the CSV
 def process_csv(input_csv, output_csv):
     df = pd.read_csv(input_csv)
@@ -63,9 +36,10 @@ def process_csv(input_csv, output_csv):
         print(f"Request ID: {request_id}")
         try:
             cursor = connection.cursor()
-            cursor.execute(f'''insert into {TABLE} (serial_no, product_name,input_image_urls,status, requestID)
-                           VALUES 
-                           (\'{row['S.No.']}\',\'{row['Product Name']}\',\'{row['Input Image Urls']}\','processing',\'{request_id}\')''')
+            cursor.execute(f'''
+                            INSERT INTO {TABLE} (serial_no, product_name, input_image_urls, status, requestID)
+                            VALUES (%s, %s, %s, %s, %s)
+                            ''', (row['S.No.'], row['Product Name'], row['Input Image Urls'], 'processing', request_id))
             # print(cursor.fetchall())
         except Exception as exception:
             print("Exception occured in SQL Connection",exception)
@@ -87,10 +61,12 @@ def process_csv(input_csv, output_csv):
         })
         try:
             cursor = connection.cursor()
-            cursor.execute(f'''UPDATE {TABLE}
-                               SET status = 'Processed',output_image_urls = \'{', '.join(output_image_urls)}\'       
-                               WHERE serial_no = {output_rows[-1]['S.No.']}''')
-            cursor.execute("commit")
+            cursor.execute(f'''
+                            UPDATE {TABLE}
+                            SET status = %s, output_image_urls = %s
+                            WHERE serial_no = %s
+                            ''', ('Processed', ', '.join(output_image_urls), row['S.No.']))
+            connection.commit()
             # print(cursor.fetchall())
         except Exception as exception:
             print("Exception occured in SQL Connection",exception)
