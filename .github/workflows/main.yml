@@ -24,12 +24,15 @@ jobs:
 
       - name: Step 2 - Processing
         if: always() && success()
-        run: echo "Step 2: Processing data."
+        run: | 
+          echo "Step 2: Processing data."
 
       - name: Step 3 - Validating
         if: success()
-        run: echo "Step 3: Validation successful."
+        run: |
+          echo "Step 3: Validation successful."
 
       - name: Step 4 - Finalizing
         if: success()
-        run: echo "Step 4: Finalization complete."
+        run: |
+          echo "Step 4: Finalization complete."
