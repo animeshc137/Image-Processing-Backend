@@ -1,0 +1,35 @@
+name: Workflow with Conditional Step 1
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-step-1:
+        description: 'Run Step 1?'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  dependent-steps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1 - Conditional Execution
+        if: ${{ inputs.run-step-1 == 'true' }}
+        run: |
+          echo "Step 1: Running because condition is true."
+
+      - name: Step 2 - Processing
+        if: always() && success()
+        run: echo "Step 2: Processing data."
+
+      - name: Step 3 - Validating
+        if: success()
+        run: echo "Step 3: Validation successful."
+
+      - name: Step 4 - Finalizing
+        if: success()
+        run: echo "Step 4: Finalization complete."
