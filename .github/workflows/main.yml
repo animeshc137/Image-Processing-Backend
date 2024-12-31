@@ -34,7 +34,7 @@ jobs:
   step-3:
     runs-on: ubuntu-latest
     needs: [step-2]
-    if: ${{ needs.step-2.result == 'success' }}
+    if: ${{ needs.step-2.outcome == 'success' }}
     steps:
       - name: Step 3 - Validating
         run: |
