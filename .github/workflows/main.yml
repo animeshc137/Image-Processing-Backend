@@ -18,7 +18,8 @@ jobs:
     if: ${{ github.event.inputs.run-step-1 == 'true' }}
     steps:
       - name: Step 1 - Conditional Execution
-        run: echo "Step 1: Running because condition is true."
+        run: |
+           echo "Step 1: Running because condition is true."
 
   step-2:
     runs-on: ubuntu-latest
@@ -27,7 +28,8 @@ jobs:
     steps:
       - name: Step 2 - Processing
         if: ${{ github.event.inputs.run-step-1 == 'false' || needs.step-1.result == 'success' }}
-        run: echo "Step 2: Processing data."
+        run: |
+           echo "Step 2: Processing data."
 
   step-3:
     runs-on: ubuntu-latest
@@ -35,7 +37,8 @@ jobs:
     if: ${{ needs.step-2.result == 'success' }}
     steps:
       - name: Step 3 - Validating
-        run: echo "Step 3: Validation successful."
+        run: |
+           echo "Step 3: Validation successful."
 
   step-4:
     runs-on: ubuntu-latest
@@ -43,4 +46,5 @@ jobs:
     if: ${{ needs.step-3.result == 'success' }}
     steps:
       - name: Step 4 - Finalizing
-        run: echo "Step 4: Finalization complete."
+        run: |
+           echo "Step 4: Finalization complete."
