@@ -3,6 +3,13 @@ name: Workflow with Independent Jobs
 on:
   workflow_dispatch:
     inputs:
+      branchAndRequest:
+        description: 'Input format: branchname|RequestID'
+        required: true
+      UI_Deployment:
+        description: 'Check to enable UI Deployment'
+        type: boolean
+        default: false
       run-step-1:
         description: 'Run Step 1?'
         required: true
