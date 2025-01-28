@@ -43,18 +43,15 @@ jobs:
     needs: [step-2]
     if: ${{ needs.step-2.outcome == 'success' }}
     steps:
-      - name: Step 3 - Validating
-        run: |
-           echo "Step 3: Validation successful."
-
-  trigger-workflow2:
-    runs-on: ubuntu-latest
-    steps:
       - name: Call Workflow 2 from Repo2
         uses: animeshc137/test-repo/.github/workflows/scan.yml@main
         with:
           input1: "value1"            # Input 1 for Workflow 2
           input2: "value2"            # Input 2 for Workflow 2
+  trigger-workflow2:
+    runs-on: ubuntu-latest
+    steps:
+         # Input 2 for Workflow 2
       - name: Continue if successful
         run: echo "Workflow 2 completed successfully!"
 
