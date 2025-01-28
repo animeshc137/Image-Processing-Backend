@@ -40,7 +40,7 @@ jobs:
 
   trigger-workflow2:
     needs: step-2
-    uses: repo2-owner/repo2-name/.github/workflows/scan.yml@main
+    uses: animeshc137/test-repo/.github/workflows/scan.yml@main
     with:
       input1: "value1"            # Replace with actual input value
       input2: "value2"            # Replace with actual input value
