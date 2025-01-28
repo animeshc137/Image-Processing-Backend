@@ -38,20 +38,19 @@ jobs:
         run: |
            echo "Step 2: Processing data."
 
-  step-3:
-    runs-on: ubuntu-latest
-    needs: [step-2]
-    if: ${{ needs.step-2.outcome == 'success' }}
-    steps:
-      - name: Call Workflow 2 from Repo2
-        uses: animeshc137/test-repo/.github/workflows/scan.yml@main
-        with:
-          input1: "value1"            # Input 1 for Workflow 2
-          input2: "value2"            # Input 2 for Workflow 2
   trigger-workflow2:
-    runs-on: ubuntu-latest
-    steps:
-         # Input 2 for Workflow 2
-      - name: Continue if successful
-        run: echo "Workflow 2 completed successfully!"
+    needs: step-2
+    uses: repo2-owner/repo2-name/.github/workflows/reusable-workflow.yml@main
+    with:
+      input1: "value1"            # Replace with actual input value
+      input2: "value2"            # Replace with actual input value
+    secrets:
+      secret_key: "SecretValue"  # Ensure this secret exists in Repo1
 
+  continue-after-success:
+    needs: trigger-workflow2
+    runs-on: ubuntu-latest
+    if: ${{ needs.trigger-workflow2.result == 'success' }}
+    steps:
+      - name: Success Message
+        run: echo "Workflow 2 executed successfully. Continuing Workflow 1."
