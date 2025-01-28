@@ -55,3 +55,13 @@ jobs:
       - name: Step 4 - Finalizing
         run: |
            echo "Step 4: Finalization complete."
+  trigger-workflow2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Workflow 2 from Repo2
+        uses: animeshc137/test-repo/.github/workflows/scan.yml@main
+        with:
+          input1: "value1"            # Input 1 for Workflow 2
+          input2: "value2"            # Input 2 for Workflow 2
+      - name: Continue if successful
+        run: echo "Workflow 2 completed successfully!"
